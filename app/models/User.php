@@ -31,7 +31,7 @@ class User
         $this->role = $role;
     }
 
-    public function getPassord()
+    public function getPassword()
     {
         return $this->password;
     }
@@ -44,13 +44,15 @@ class User
     public function addUser($data)
     {
       // Prepare Query
-        Database::getInstance()->query('INSERT INTO users (name, email,password) 
-      VALUES (:name, :email, :password)');
+        Database::getInstance()->query("INSERT INTO users (first_name,last_name,username,`e-mail`,password,user_type)  
+      VALUES (:f_name,:l_name,:u_name,:e_mail,:pass,'USER')");
 
       // Bind Values
-        Database::getInstance()->bind(':name', $data['name']);
-        Database::getInstance()->bind(':email', $data['email']);
-        Database::getInstance()->bind(':password', $data['password']);
+        Database::getInstance()->bind(':f_name', $data['fname']);
+        Database::getInstance()->bind(':l_name', $data['lname']);
+        Database::getInstance()->bind(':u_name', $data['uname']);
+        Database::getInstance()->bind(':e_mail', $data['email']);
+        Database::getInstance()->bind(':pass', $data['password']);
       
       //Execute
         if (Database::getInstance()->execute()) {
@@ -62,7 +64,7 @@ class User
 
     // Find User by Email
     public function findUserByEmail($email){
-        Database::getInstance()->query("SELECT * FROM users WHERE email = :email");
+        Database::getInstance()->query("SELECT * FROM users WHERE `e-mail` = :email");
         Database::getInstance()->bind(':email', $email);
 
         $row = Database::getInstance()->single();

@@ -105,39 +105,56 @@ class Database
     }
 }
 
-class Cinema
-{
+class Cinema{
     public $id;
     public $name;
     public $location;
+    public $cinemaHallCounts;
+    public $normalPrice;
+    public $vipPrice;
+    public $image;
+    public $popularity;
+    public $geoLocation;
 
-//    private $db;
 
-    public function __construct($id = null, $name = null, $loc = null)
-    {
+    public function __construct($id = null, $name = null, $loc = null,$cinemaHallCount=1,$normalPrice=null,$vipPrice=null,$image=null,$popularity=null,$geoLocation=null){
         $this->id = $id;
         $this->name = $name;
         $this->location = $loc;
-
-//      $this->db = new Database;
+        $this->cinemaHallCounts=$cinemaHallCount;
+        $this->normalPrice=$normalPrice;
+        $this->vipPrice=$vipPrice;
+        $this->image=$image;
+        $this->popularity=$popularity;
+        $this->geoLocation=$geoLocation;
     }
 
-    // Get All Articles
-    public static function getAllCinemas()
-    {
+    // Get All Cinemas
+    public static function getAllCinemas(){
         $list = [];
         Database::getInstance()->query("SELECT * FROM `cinemas`;");
         $results = Database::getInstance()->resultset();
         foreach ($results as $cinema) {
-            $list[] = new Cinema($cinema->id, $cinema->name, $cinema->location);
+            $list[] = new Cinema($cinema->id, $cinema->name, $cinema->location,$cinema->cinema_hall_count,$cinema->normal_price,$cinema->vip_price,$cinema->image,$cinema->popularity,$cinema->geo_location);
+        }
+        return $list;
+
+    }
+
+    //Get top rated cinemas
+    public static function getPopularCinemas(){
+        $list = [];
+        Database::getInstance()->query("SELECT * FROM `cinemas` ORDER BY `popularity` DESC LIMIT 4;");
+        $results = Database::getInstance()->resultset();
+        foreach ($results as $cinema) {
+            $list[] = new Cinema($cinema->id, $cinema->name, $cinema->location,$cinema->cinema_hall_count,$cinema->normal_price,$cinema->vip_price,$cinema->image,$cinema->popularity,$cinema->geo_location);
         }
         return $list;
 
     }
 
     // Add Cinema / Register
-    public function addCinema($data)
-    {
+    public function addCinema($data){
         // Prepare Query
         Database::getInstance()->query('INSERT INTO cinemas (name,location) VALUES(:name, :location)');
 
@@ -154,30 +171,22 @@ class Cinema
     }
 
     // Find cinema by name
-    public function getCinemaByName($data)
-    {
+    public function getCinemaByName($data){
         Database::getInstance()->query("SELECT * FROM cinemas WHERE cinemas.name = :name");
         Database::getInstance()->bind(':name', $data['name']);
 
-        $row = Database::getInstance()->single();
+        $cinema = Database::getInstance()->single();
+        return new Cinema($cinema->id, $cinema->name, $cinema->location,$cinema->cinem_hall_count,$cinema->normal_price,$cinema->vip_price,$cinema->image,$cinema->popularity,$cinema->geo_location);
 
-        //Check Rows
-        if (Database::getInstance()->rowCount() > 0) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     // Find cinema by ID
-    public function getCinemaById($data)
-    {
+    public function getCinemaById($id){
         Database::getInstance()->query("SELECT * FROM cinemas WHERE id = :id");
-        Database::getInstance()->bind(':id', $data['id']);
+        Database::getInstance()->bind(':id', $id);
 
-        $row = Database::getInstance()->single();
-
-        return $row;
+        $cinema = Database::getInstance()->single();
+        return new Cinema($cinema->id, $cinema->name, $cinema->location,$cinema->cinema_hall_count,$cinema->normal_price,$cinema->vip_price,$cinema->image,$cinema->popularity,$cinema->geo_location);
     }
 
 }

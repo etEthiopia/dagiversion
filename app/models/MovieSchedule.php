@@ -123,8 +123,8 @@ class MovieSchedule
 
     public function getScheduleByMovie($data)
     {
-        Database::getInstance()->query("SELECT cinemas.name as n,movies.movie_title as m, movie_schedules.schedule_day as d,movie_schedules.schedule_time as t FROM cinemas,movies,movie_schedules WHERE movies.movie_title = :tit AND movie_schedules.cinema_id=cinemas.id");
-        Database::getInstance()->bind(':tit', $data['title']);
+        Database::getInstance()->query("SELECT cinemas.name as n,movies.movie_title as m, movie_schedules.schedule_day as d,movie_schedules.schedule_time as t FROM cinemas,movies,movie_schedules WHERE movies.id = :id AND movie_schedules.cinema_id=cinemas.id");
+        Database::getInstance()->bind(':id', $data['mId']);
 
         $row = Database::getInstance()->resultset();
 
